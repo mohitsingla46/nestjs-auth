@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, UsePipes, ValidationPipe } from "@nestjs/common";
+import { Body, Controller, Delete, Get, NotFoundException, Param, Post, UsePipes, ValidationPipe } from "@nestjs/common";
 import { BookDto } from "./dto/books.dto";
 import { Book } from "./schemas/books.schemas";
 import { BookService } from "./book.service";
@@ -13,8 +13,19 @@ export class BookController{
         return this.bookService.addbook(book);
     }
 
-    @Get('/list')
+    @Get('list')
     async getbooks(){
         return this.bookService.getbooks();
+    }
+
+    @Get(':id')
+    async getBook(@Param('id') id:string): Promise<Book | {message: string}>{
+        return this.bookService.getbookbyid(id);
+    }
+
+    @Delete(':id')
+    async deleteBook(@Param('id') id:string): Promise<{message: string}>{
+        await this.bookService.deletebookbyid(id);
+        return { message: 'Book deleted successfully' }; 
     }
 }
