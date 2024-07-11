@@ -1,7 +1,8 @@
-import { Body, Controller, Delete, Get, NotFoundException, Param, Post, UsePipes, ValidationPipe } from "@nestjs/common";
+import { Body, Controller, Delete, Get, NotFoundException, Param, Post, UsePipes, ValidationPipe, UseGuards } from "@nestjs/common";
 import { BookDto } from "./dto/books.dto";
 import { Book } from "./schemas/books.schemas";
 import { BookService } from "./book.service";
+import { AuthGuard } from '../auth/auth.guard';
 
 @Controller('book')
 export class BookController{
@@ -13,6 +14,7 @@ export class BookController{
         return this.bookService.addbook(book);
     }
 
+    @UseGuards(AuthGuard)
     @Get('list')
     async getbooks(){
         return this.bookService.getbooks();
