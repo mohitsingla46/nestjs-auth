@@ -7,10 +7,19 @@ import {
 import { JwtService } from '@nestjs/jwt';
 import { jwtConstants } from './constants';
 import { Request } from 'express';
+import { Reflector } from '@nestjs/core';
+import { InjectModel } from '@nestjs/mongoose';
+import { Model } from 'mongoose';
+import { User } from './schemas/users.schema';
+import { ROLES_KEY } from './roles.decorator';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
-    constructor(private jwtService: JwtService) { }
+    constructor(
+        private jwtService: JwtService,
+        private reflector: Reflector,
+        @InjectModel(User.name) private userModel: Model<User>,
+    ) { }
 
     async canActivate(context: ExecutionContext): Promise<boolean> {
         const request = context.switchToHttp().getRequest();
@@ -26,14 +35,29 @@ export class AuthGuard implements CanActivate {
                 }
             );
             request['user'] = payload;
+            const requiredRoles = this.reflector.getAllAndOverride<string[]>(ROLES_KEY, [
+                context.getHandler(),
+                context.getClass(),
+            ]);
+            
+            if (!requiredRoles) {
+                return true;
+            }
+
+            const userRoles = await this.getUserRoles(payload.email);
+            return requiredRoles.some((role) => userRoles.includes(role));
         } catch {
             throw new UnauthorizedException();
         }
-        return true;
     }
 
     private extractTokenFromHeader(request: Request): string | undefined {
         const [type, token] = request.headers.authorization?.split(' ') ?? [];
         return type === 'Bearer' ? token : undefined;
+    }
+
+    private async getUserRoles(email: string): Promise<string> {
+        const user = await this.userModel.findOne({'email': email}).exec();
+        return user ? user.role : '';
     }
 }

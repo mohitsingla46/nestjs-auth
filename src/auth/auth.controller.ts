@@ -3,6 +3,7 @@ import { AuthService } from "./auth.service";
 import { UserDto } from "./dto/users.dto";
 import { User } from "./schemas/users.schema";
 import { AuthGuard } from './auth.guard';
+import { Roles } from "src/auth/roles.decorator";
 
 @Controller('auth')
 export class AuthController{
@@ -20,8 +21,9 @@ export class AuthController{
         return this.authService.signin(user.email, user.password);
     }
 
-    @UseGuards(AuthGuard)
     @Get('profile')
+    @UseGuards(AuthGuard)
+    @Roles('ADMIN','VENDOR','USER')
     getProfile(@Request() req) {
         return req.user;
     }
