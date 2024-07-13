@@ -5,13 +5,13 @@ import {
     UnauthorizedException,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { jwtConstants } from './constants';
+import { jwtConstants } from '../utils/constants';
 import { Request } from 'express';
 import { Reflector } from '@nestjs/core';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { User } from './schemas/users.schema';
-import { ROLES_KEY } from './roles.decorator';
+import { User } from '../auth/schemas/users.schema';
+import { ROLES_KEY } from '../decorators/roles.decorator';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
