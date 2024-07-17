@@ -5,6 +5,7 @@ import { BookService } from "./book.service";
 import { AuthGuard } from '../guards/auth.guard';
 import { Roles } from "../decorators/roles.decorator";
 import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
+import { admin, vendor, user } from "../utils/constants";
 
 @Controller('book')
 @UseGuards(AuthGuard)
@@ -15,7 +16,7 @@ export class BookController {
     @Post('add_book')
     @ApiTags('protected')
     @ApiBearerAuth('access-token')
-    @Roles('ADMIN', 'VENDOR')
+    @Roles(admin, vendor)
     @UsePipes(ValidationPipe)
     async addbook(@Body() book: BookDto): Promise<Book> {
         return this.bookService.addbook(book);
@@ -24,7 +25,7 @@ export class BookController {
     @Get('list')
     @ApiTags('protected')
     @ApiBearerAuth('access-token')
-    @Roles('ADMIN', 'VENDOR', 'USER')
+    @Roles(admin, vendor, user)
     async getbooks() {
         return this.bookService.getbooks();
     }
@@ -32,7 +33,7 @@ export class BookController {
     @Get(':id')
     @ApiTags('protected')
     @ApiBearerAuth('access-token')
-    @Roles('ADMIN', 'VENDOR', 'USER')
+    @Roles(admin, vendor, user)
     async getBook(@Param('id') id: string): Promise<Book | { message: string }> {
         return this.bookService.getbookbyid(id);
     }
@@ -40,7 +41,7 @@ export class BookController {
     @Delete(':id')
     @ApiTags('protected')
     @ApiBearerAuth('access-token')
-    @Roles('ADMIN', 'VENDOR')
+    @Roles(admin, vendor)
     async deleteBook(@Param('id') id: string): Promise<{ message: string }> {
         await this.bookService.deletebookbyid(id);
         return { message: 'Book deleted successfully' };

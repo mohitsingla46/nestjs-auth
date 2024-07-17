@@ -6,6 +6,7 @@ import { AuthGuard } from '../guards/auth.guard';
 import { Roles } from "../decorators/roles.decorator";
 import { SignInDto } from "./dto/signin.dto";
 import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
+import { admin, vendor, user } from "../utils/constants";
 
 @Controller('auth')
 export class AuthController {
@@ -29,7 +30,7 @@ export class AuthController {
     @ApiTags('protected')
     @ApiBearerAuth('access-token')
     @UseGuards(AuthGuard)
-    @Roles('ADMIN', 'VENDOR', 'USER')
+    @Roles(admin, vendor, user)
     getProfile(@Request() req) {
         return req.user;
     }
