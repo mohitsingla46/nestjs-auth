@@ -1,22 +1,21 @@
 import { Injectable } from "@nestjs/common";
-import { InjectModel } from "@nestjs/mongoose";
-import { Model } from "mongoose";
 import { Book } from "./schemas/books.schemas";
+import { BookDao } from './book.dao';
 
 @Injectable({})
 export class BookService {
-    constructor(@InjectModel(Book.name) private bookModel: Model<Book>) { }
+    constructor(private readonly bookDao: BookDao) { }
 
     async addbook(book: Book): Promise<Book> {
-        return await this.bookModel.create(book);
+        return await this.bookDao.create(book);
     }
 
     async getbooks() {
-        return await this.bookModel.find();
+        return await this.bookDao.find();
     }
 
     async getbookbyid(id: string): Promise<Book | {message: string}> {
-        const book = await this.bookModel.findById(id);
+        const book = await this.bookDao.findById(id);
         if (!book) {
             return { message: 'Book not found' };
         }
@@ -24,6 +23,6 @@ export class BookService {
     }
 
     async deletebookbyid(id: string): Promise<Book> {
-        return await this.bookModel.findByIdAndDelete(id);
+        return await this.bookDao.findByIdAndDelete(id);
     }
 }
