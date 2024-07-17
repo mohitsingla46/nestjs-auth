@@ -11,17 +11,27 @@ export class AuthService {
     ) { }
 
     async signup(user: User): Promise<User> {
-        return await this.authDao.create(user);
+        try {
+            return await this.authDao.create(user);
+        }
+        catch (error) {
+            console.error('An error occurred:', error.message);
+        }
     }
 
     async signin(email: string, password: string): Promise<{ access_token: string }> {
-        const user = await this.authDao.findOne(email);
-        if (user?.password !== password) {
-            throw new UnauthorizedException();
+        try {
+            const user = await this.authDao.findOne(email);
+            if (user?.password !== password) {
+                throw new UnauthorizedException();
+            }
+            const payload = { name: user.name, email: user.email };
+            return {
+                access_token: await this.jwtService.signAsync(payload),
+            };
         }
-        const payload = { name: user.name, email: user.email };
-        return {
-            access_token: await this.jwtService.signAsync(payload),
-        };
+        catch (error) {
+            console.error('An error occurred:', error.message);
+        }
     }
 }

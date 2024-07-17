@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+import { HttpException, Injectable } from "@nestjs/common";
 import { Book } from "./schemas/books.schemas";
 import { BookDao } from './book.dao';
 
@@ -7,22 +7,42 @@ export class BookService {
     constructor(private readonly bookDao: BookDao) { }
 
     async addbook(book: Book): Promise<Book> {
-        return await this.bookDao.create(book);
+        try {
+            return await this.bookDao.create(book);
+        }
+        catch (error) {
+            console.error('An error occurred:', error.message);
+        }
     }
 
     async getbooks() {
-        return await this.bookDao.find();
+        try {
+            return await this.bookDao.find();
+        }
+        catch (error) {
+            console.error('An error occurred:', error.message);
+        }
     }
 
-    async getbookbyid(id: string): Promise<Book | {message: string}> {
-        const book = await this.bookDao.findById(id);
-        if (!book) {
-            return { message: 'Book not found' };
+    async getbookbyid(id: string): Promise<Book | { message: string }> {
+        try {
+            const book = await this.bookDao.findById(id);
+            if (!book) {
+                return { message: 'Book not found' };
+            }
+            return book;
         }
-        return book;
+        catch (error) {
+            console.error('An error occurred:', error.message);
+        }
     }
 
     async deletebookbyid(id: string): Promise<Book> {
-        return await this.bookDao.findByIdAndDelete(id);
+        try {
+            return await this.bookDao.findByIdAndDelete(id);
+        }
+        catch (error) {
+            console.error('An error occurred:', error.message);
+        }
     }
 }
