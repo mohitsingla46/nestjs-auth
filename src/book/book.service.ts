@@ -1,5 +1,5 @@
 import { HttpException, Injectable } from "@nestjs/common";
-import { Book } from "./schemas/books.schemas";
+import { Book } from "./schemas/books.schema";
 import { BookDao } from './book.dao';
 
 @Injectable({})

@@ -1,6 +1,6 @@
 import { Body, Controller, Delete, Get, NotFoundException, Param, Post, UsePipes, ValidationPipe, UseGuards } from "@nestjs/common";
 import { BookDto } from "./dto/books.dto";
-import { Book } from "./schemas/books.schemas";
+import { Book } from "./schemas/books.schema";
 import { BookService } from "./book.service";
 import { AuthGuard } from '../guards/auth.guard';
 import { Roles } from "../decorators/roles.decorator";
