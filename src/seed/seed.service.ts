@@ -1,9 +1,8 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { Model, Types } from 'mongoose';
 import { Role } from '../auth/schemas/role.schema';
 import { Category } from '../category/schemas/category.schema';
-import { Book } from '../book/schemas/books.schema';
 import { BookService } from '../book/book.service';
 
 @Injectable()
@@ -105,16 +104,25 @@ export class SeedService {
         ];
 
         for (const category of categories) {
+            let categoryAdded = null;
             const existingCategory = await this.categoryModel.findOne({ name: category.name });
             if (!existingCategory) {
-                await this.categoryModel.create(category);
+                categoryAdded = await this.categoryModel.create(category);
                 this.logger.log(`Inserted category: ${category.name}`);
             } else {
+                categoryAdded = await this.categoryModel.findOne({name: category.name});
                 this.logger.log(`Category ${category.name} already exists`);
             }
 
-            for (const bookData of category.books) {
-                this.bookService.addbook(bookData);
+            if (categoryAdded) {
+                for (const bookData of category.books) {
+                    const book = {
+                        ...bookData, 
+                        category: new Types.ObjectId(categoryAdded._id).toString()
+                    };
+                    await this.bookService.addbook(book);
+                    this.logger.log(`Inserted book: ${bookData.title}`);
+                }
             }
         }
     }
