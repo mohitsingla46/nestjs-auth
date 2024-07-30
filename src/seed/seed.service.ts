@@ -11,24 +11,22 @@ import { join } from 'path';
 export class SeedService {
     private readonly logger = new Logger(SeedService.name);
     private categories: any[];
+    private roles: any[];
 
     constructor(
         @InjectModel(Role.name) private roleModel: Model<Role>,
         @InjectModel(Category.name) private categoryModel: Model<Category>,
         private bookService: BookService
     ) {
-        const filePath = join(__dirname, '..', 'seed/data', 'categories.json');
-        this.categories = JSON.parse(readFileSync(filePath, 'utf-8'));
+        const cateforiesFile = join(__dirname, '..', 'seed/data', 'categories.json');
+        this.categories = JSON.parse(readFileSync(cateforiesFile, 'utf-8'));
+        const rolesFile = join(__dirname, '..', 'seed/data', 'roles.json');
+        this.roles = JSON.parse(readFileSync(rolesFile, 'utf-8'));
      }
 
     async seed() {
-        const roles = [
-            { name: 'ADMIN' },
-            { name: 'VENDOR' },
-            { name: 'USER' },
-        ];
 
-        for (const role of roles) {
+        for (const role of this.roles) {
             const existingRole = await this.roleModel.findOne({ name: role.name });
             if (!existingRole) {
                 await this.roleModel.create(role);
