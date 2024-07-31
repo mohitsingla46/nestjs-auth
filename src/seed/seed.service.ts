@@ -18,9 +18,9 @@ export class SeedService {
         @InjectModel(Category.name) private categoryModel: Model<Category>,
         private bookService: BookService
     ) {
-        const cateforiesFile = join(__dirname, '..', 'seed/data', 'categories.json');
+        const cateforiesFile = join(process.cwd(), 'src/seed/data', 'categories.json');
         this.categories = JSON.parse(readFileSync(cateforiesFile, 'utf-8'));
-        const rolesFile = join(__dirname, '..', 'seed/data', 'roles.json');
+        const rolesFile = join(process.cwd(), 'src/seed/data', 'roles.json');
         this.roles = JSON.parse(readFileSync(rolesFile, 'utf-8'));
      }
 

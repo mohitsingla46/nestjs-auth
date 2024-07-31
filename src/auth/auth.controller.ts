@@ -1,7 +1,6 @@
 import { Body, Controller, Post, UsePipes, ValidationPipe, UseGuards, Get, Request } from "@nestjs/common";
 import { AuthService } from "./auth.service";
 import { SignUpDto } from "./dto/signup.dto";
-import { User } from "./schemas/users.schema";
 import { AuthGuard } from '../guards/auth.guard';
 import { Roles } from "../decorators/roles.decorator";
 import { SignInDto } from "./dto/signin.dto";
@@ -15,7 +14,7 @@ export class AuthController {
     @Post('signup')
     @ApiTags('public')
     @UsePipes(ValidationPipe)
-    async signup(@Body() user: SignUpDto): Promise<User> {
+    async signup(@Body() user: SignUpDto): Promise<any> {
         return this.authService.signup(user);
     }
 
@@ -31,8 +30,7 @@ export class AuthController {
     @ApiBearerAuth('access-token')
     @UseGuards(AuthGuard)
     @Roles(admin, vendor, user)
-    getProfile(@Request() req) {
-        return req.user;
+    async getProfile(@Request() req): Promise<any> {
+        return this.authService.getProfile(req);
     }
-
 }

@@ -6,6 +6,7 @@ import { Category, CategorySchema } from '../category/schemas/category.schema';
 import { Book, BookSchema } from '../book/schemas/books.schema';
 import { BookService } from '../book/book.service';
 import { BookDao } from '../book/book.dao';
+import { ResponseService } from '../common/services/response.service';
 
 @Module({
     imports: [
@@ -21,6 +22,6 @@ import { BookDao } from '../book/book.dao';
             }
         ]),
     ],
-    providers: [SeedService, BookService, BookDao],
+    providers: [SeedService, BookService, BookDao, ResponseService],
 })
 export class SeedModule { }

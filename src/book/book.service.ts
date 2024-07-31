@@ -1,48 +1,57 @@
-import { HttpException, Injectable } from "@nestjs/common";
+import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
 import { Book } from "./schemas/books.schema";
 import { BookDao } from './book.dao';
+import { ResponseService } from "../common/services/response.service";
+import { ResponseDto } from "src/common/dto/response.dto";
 
 @Injectable({})
 export class BookService {
-    constructor(private readonly bookDao: BookDao) { }
+    constructor(
+        private readonly bookDao: BookDao,
+        private readonly responseService: ResponseService
+    ) { }
 
-    async addbook(book: Book): Promise<Book> {
+    async addbook(book: Book): Promise<ResponseDto<any>> {
         try {
-            return await this.bookDao.create(book);
+            const bookAdded = await this.bookDao.create(book);
+            return this.responseService.success(bookAdded);
         }
         catch (error) {
-            console.error('An error occurred:', error.message);
+            return this.responseService.error(error.message, HttpStatus.BAD_REQUEST);
         }
     }
 
-    async getbooks() {
+    async getbooks(): Promise<ResponseDto<any>> {
         try {
-            return await this.bookDao.find();
+            const books = await this.bookDao.find();
+            return this.responseService.success(books);
         }
         catch (error) {
-            console.error('An error occurred:', error.message);
+            return this.responseService.error(error.message, HttpStatus.BAD_REQUEST);
         }
     }
 
-    async getbookbyid(id: string): Promise<Book | { message: string }> {
+    async getbookbyid(id: string): Promise<ResponseDto<any>> {
         try {
             const book = await this.bookDao.findById(id);
-            if (!book) {
-                return { message: 'Book not found' };
+            if (book) {
+                return this.responseService.success(book);
             }
-            return book;
+
+            return this.responseService.error('Book not found', HttpStatus.BAD_REQUEST);
         }
         catch (error) {
-            console.error('An error occurred:', error.message);
+            return this.responseService.error(error.message, HttpStatus.BAD_REQUEST);
         }
     }
 
-    async deletebookbyid(id: string): Promise<Book> {
+    async deletebookbyid(id: string): Promise<ResponseDto<any>> {
         try {
-            return await this.bookDao.findByIdAndDelete(id);
+            const book = await this.bookDao.findByIdAndDelete(id);
+            return this.responseService.success(book);
         }
         catch (error) {
-            console.error('An error occurred:', error.message);
+            return this.responseService.error(error.message, HttpStatus.BAD_REQUEST);
         }
     }
 }

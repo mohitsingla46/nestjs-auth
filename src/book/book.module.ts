@@ -5,6 +5,7 @@ import { BookController } from './book.controller';
 import { BookService } from './book.service';
 import { User, UserSchema } from '../auth/schemas/users.schema';
 import { BookDao } from './book.dao';
+import { ResponseService } from '../common/services/response.service';
 
 @Module({
     imports: [MongooseModule.forFeature([
@@ -16,6 +17,6 @@ import { BookDao } from './book.dao';
         }
     ])],
     controllers: [BookController],
-    providers: [BookDao, BookService]
+    providers: [BookDao, BookService, ResponseService]
 })
 export class BookModule { }

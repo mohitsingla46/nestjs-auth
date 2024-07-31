@@ -18,7 +18,7 @@ export class BookController {
     @ApiBearerAuth('access-token')
     @Roles(admin, vendor)
     @UsePipes(ValidationPipe)
-    async addbook(@Body() book: BookDto): Promise<Book> {
+    async addbook(@Body() book: BookDto): Promise<any> {
         return this.bookService.addbook(book);
     }
 
@@ -26,7 +26,7 @@ export class BookController {
     @ApiTags('protected')
     @ApiBearerAuth('access-token')
     @Roles(admin, vendor, user)
-    async getbooks() {
+    async getbooks(): Promise<any> {
         return this.bookService.getbooks();
     }
 
@@ -34,7 +34,7 @@ export class BookController {
     @ApiTags('protected')
     @ApiBearerAuth('access-token')
     @Roles(admin, vendor, user)
-    async getBook(@Param('id') id: string): Promise<Book | { message: string }> {
+    async getBook(@Param('id') id: string): Promise<any> {
         return this.bookService.getbookbyid(id);
     }
 
@@ -42,8 +42,7 @@ export class BookController {
     @ApiTags('protected')
     @ApiBearerAuth('access-token')
     @Roles(admin, vendor)
-    async deleteBook(@Param('id') id: string): Promise<{ message: string }> {
-        await this.bookService.deletebookbyid(id);
-        return { message: 'Book deleted successfully' };
+    async deleteBook(@Param('id') id: string): Promise<any> {
+        return this.bookService.deletebookbyid(id);
     }
 }
